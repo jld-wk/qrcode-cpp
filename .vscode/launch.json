@@ -7,6 +7,11 @@
       "request": "launch",
       "program": "${workspaceFolder}/build/qrcode",
       "args": [],
+      "initCommands": [
+        "type format add --format u \"unsigned int\"",
+        "type format add --format u \"unsigned char\"",
+        "type format add --format u \"unsigned long long\""
+      ],
       "cwd": "${workspaceFolder}",
       "preLaunchTask": "Build"
     }

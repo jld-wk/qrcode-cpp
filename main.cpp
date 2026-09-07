@@ -1,4 +1,5 @@
 #include <chrono>
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <fstream>
@@ -29,7 +30,7 @@ int main() {
 
   auto start = std::chrono::high_resolution_clock::now();
 
-  QrCode qr_code{ data, 4, Ecc::L, false };
+  QrCode qr_code{ data, 40, Ecc::L, false };
 
   auto end = std::chrono::high_resolution_clock::now();
   auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);

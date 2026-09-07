@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "qrcode_arrays.hpp"
+
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
@@ -27,14 +29,14 @@ class QrCodePixels {
     }
   }
 
-  void fill_area(size_t row, size_t column, size_t width, size_t height,
-                 const std::vector<uint8_t>& data, size_t offset = 0, bool debug = false) {
-    size_t i = offset;
+  void fill_area(size_t row, size_t column, size_t width, size_t height, const BchArray& data,
+                 size_t offset = 0, bool debug = false, bool fill_inverted = false) {
+    size_t i = fill_inverted ? (offset + (width > 1 ? width : height) - 1) : offset;
     for (size_t r = m_wh_ - row; r-- != m_wh_ - row - height;) {
       for (size_t c = column; c < column + width; ++c) {
         size_t idx = pixel_idx(r, c);
         m_pixels_[idx] = debug ? data[i] : data[i] == 1 ? 0 : 255;
-        ++i;
+        fill_inverted ? --i : ++i;
       }
     }
   }
