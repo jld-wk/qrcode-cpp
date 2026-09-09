@@ -48,12 +48,8 @@ class StackArray {
   }
 };
 
-// TODO: 67 is wrong because we need to take ec codewords into account as well
-using CodewordBlock = StackArray<uint8_t, 70>;
-// TODO: is 123 correct? max for group 1 is actually: 49, 122
-using CodewordArray = StackArray<uint8_t, 70 * 200>;
-
-// 18 elements is the largest operation the qr code generator needs. Is that true, future me?
+// TODO: Generate it using the memoizer
+using CodewordArray = StackArray<uint8_t, 3800>;
 using BchArray = StackArray<uint8_t, 18>;
 
 #endif

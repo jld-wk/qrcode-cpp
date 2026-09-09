@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(OpenCV REQUIRED)
 
-add_executable(qrcode main.cpp)
+add_executable(qrcode src/main.cpp)
 
 target_link_libraries(qrcode
     PRIVATE

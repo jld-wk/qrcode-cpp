@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "qrcode.hpp"
+#include "qrcode_memoizer.hpp"
 
 int main() {
   std::fstream f{ "data.txt", std::ios::in | std::ios::binary };
@@ -28,9 +29,28 @@ int main() {
   std::vector<uint8_t> data(data_size);
   f.read(reinterpret_cast<char*>(data.data()), data.size());
 
+  /*
+  QrCodeMemoizer memoizer{ "src/qrcode_memoized.hpp" };
+  memoizer.generate_encoding_info();
+  memoizer.generate_exp_table();
+  memoizer.generate_log_table();
+  memoizer.generate_polynomial_generator();
+  memoizer.generate_format_information();
+  memoizer.generate_version_information();*/
+
   auto start = std::chrono::high_resolution_clock::now();
 
-  QrCode qr_code{ data, 40, Ecc::L, false };
+  QrCodeGenerator generator;
+
+  constexpr QrCodeDebugFlag debug_flags = QrCodeDebugFlag::None;
+
+  constexpr QrCodeInfo info{
+    .ecc = Ecc::L,
+    .version = 40,
+  };
+  constexpr QrCodeGenerationInfo gen_info = generator.gen_info<info>();
+
+  generator.generate(data, info, debug_flags);
 
   auto end = std::chrono::high_resolution_clock::now();
   auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);

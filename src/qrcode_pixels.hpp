@@ -1,6 +1,7 @@
 #ifndef QRCODE_PIXELS_HPP
 #define QRCODE_PIXELS_HPP
 
+#include <array>
 #include <cstdint>
 #include <vector>
 
@@ -13,11 +14,6 @@
 
 class QrCodePixels {
  public:
-  QrCodePixels(size_t wh)
-      : m_wh_(wh)
-      , m_pixels_(wh * wh, 255)
-      , m_reserved_(wh * wh, false) {}
-
   void fill_area(size_t row, size_t column, size_t width, size_t height, bool fill = true,
                  bool reserve = false) {
     for (size_t r = row; r < row + height; ++r) {
@@ -29,13 +25,29 @@ class QrCodePixels {
     }
   }
 
-  void fill_area(size_t row, size_t column, size_t width, size_t height, const BchArray& data,
-                 size_t offset = 0, bool debug = false, bool fill_inverted = false) {
+  void fill_area(size_t row, size_t column, size_t width, size_t height,
+                 const std::array<uint8_t, 15>& data, size_t offset = 0, bool debug = false,
+                 bool fill_inverted = false) {
     size_t i = fill_inverted ? (offset + (width > 1 ? width : height) - 1) : offset;
     for (size_t r = m_wh_ - row; r-- != m_wh_ - row - height;) {
       for (size_t c = column; c < column + width; ++c) {
         size_t idx = pixel_idx(r, c);
         m_pixels_[idx] = debug ? data[i] : data[i] == 1 ? 0 : 255;
+        m_reserved_[idx] = true;
+        fill_inverted ? --i : ++i;
+      }
+    }
+  }
+
+  void fill_area(size_t row, size_t column, size_t width, size_t height,
+                 const std::array<uint8_t, 18>& data, size_t offset = 0, bool debug = false,
+                 bool fill_inverted = false) {
+    size_t i = fill_inverted ? (offset + (width > 1 ? width : height) - 1) : offset;
+    for (size_t r = m_wh_ - row; r-- != m_wh_ - row - height;) {
+      for (size_t c = column; c < column + width; ++c) {
+        size_t idx = pixel_idx(r, c);
+        m_pixels_[idx] = debug ? data[i] : data[i] == 1 ? 0 : 255;
+        m_reserved_[idx] = true;
         fill_inverted ? --i : ++i;
       }
     }
@@ -68,6 +80,12 @@ class QrCodePixels {
     if (idx >= m_pixels_.size())
       return 0;*/
     return (m_wh_ * row) + column;
+  }
+
+  void resize(size_t modules_width, size_t total_modules) {
+    m_wh_ = modules_width;
+    m_pixels_.resize(total_modules, 255);
+    m_reserved_.resize(total_modules, false);
   }
 
  private:
