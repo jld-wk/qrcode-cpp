@@ -324,6 +324,7 @@ class QrCodeGenerator {
     }
 
     if (gen_info.outPath != nullptr) {
+     // TODO(jld-wk): Make this configurable
       const size_t scale = 4;
       const size_t quiet_zone = 4;
       const size_t quiet_zone_px = quiet_zone * scale;
