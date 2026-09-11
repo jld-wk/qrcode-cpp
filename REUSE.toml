@@ -1,0 +1,19 @@
+version = 1
+
+[[annotations]]
+path = [
+    ".gitignore",
+    ".clang-format",
+    ".clang-tidy",
+    ".pre-commit-config.yaml",
+    ".clangd",
+    "CMakeLists.txt",
+    "CMakePresets.json",
+    "defaults.cfg",
+    "example-data.txt",
+    "tools/main.cpp",
+    "src/main.cpp",
+    "scripts/memoize.sh"
+]
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"

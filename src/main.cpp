@@ -1,18 +1,16 @@
-#include <chrono>
-#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <fstream>
+#include <ios>
 #include <iostream>
 #include <vector>
 
-#include "qrcode.hpp"
-#include "qrcode_memoizer.hpp"
+#include "qrcode/core.hpp"
 
-int main() {
-  std::fstream f{ "data.txt", std::ios::in | std::ios::binary };
+auto main() -> int {
+  std::fstream f{ "example-data.txt", std::ios::in | std::ios::binary };
   if (!f.is_open()) {
-    std::cerr << "Couldn't open file: data.txt\n";
+    std::cerr << "Couldn't open file: example-data.txt\n";
     return 1;
   }
 
@@ -20,42 +18,30 @@ int main() {
   size_t data_size = static_cast<size_t>(f.tellg());
 
   if (data_size == 0) {
-    std::cerr << "Nothing to encode: data.txt\n";
+    std::cerr << "Nothing to encode: example-data.txt\n";
     return 1;
   }
 
   f.seekg(0, std::ios::beg);
 
   std::vector<uint8_t> data(data_size);
-  f.read(reinterpret_cast<char*>(data.data()), data.size());
+  f.read(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(data.size()));
 
-  /*
-  QrCodeMemoizer memoizer{ "src/qrcode_memoized.hpp" };
-  memoizer.generate_encoding_info();
-  memoizer.generate_exp_table();
-  memoizer.generate_log_table();
-  memoizer.generate_polynomial_generator();
-  memoizer.generate_format_information();
-  memoizer.generate_version_information();*/
-
-  auto start = std::chrono::high_resolution_clock::now();
-
-  QrCodeGenerator generator;
-
-  constexpr QrCodeDebugFlag debug_flags = QrCodeDebugFlag::None;
-
-  constexpr QrCodeInfo info{
-    .ecc = Ecc::L,
+  jld::QrCodeGenInfo info{
+    .ecc = jld::QrCodeEcc::L,
     .version = 40,
+    .outPath = "example-out.png",
+    .customMaskIdx = 0,  // It's unused
+    .flags = jld::QrCodeGenInfoFlag::c_none_,
   };
-  constexpr QrCodeGenerationInfo gen_info = generator.gen_info<info>();
 
-  generator.generate(data, info, debug_flags);
+  jld::QrCodeGenerator generator;
+  jld::QrCodeGenResult result = generator.generate<jld::QrCodeDebugFlag::c_none_>(data, info);
 
-  auto end = std::chrono::high_resolution_clock::now();
-  auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-
-  std::cout << "Generated the QR-Code in " << diff.count() << "ms!\n";
+  if (result != jld::QrCodeGenResult::Success) {
+    std::cerr << "Failed to generate!\n";
+    return 1;
+  }
 
   return 0;
 }

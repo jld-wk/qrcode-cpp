@@ -1,2 +1,8 @@
-build/*
-.cache/*
+/build/
+/.cache/
+/.vscode/
+/qrcode
+/a.out
+/perf.data
+/perf.data.old
+/example-out.png
